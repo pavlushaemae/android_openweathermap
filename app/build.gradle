@@ -5,12 +5,12 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.itis.android_2c2s_first_project"
         minSdk 23
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -22,6 +22,12 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    def keystoreProperties = new Properties()
+    keystoreProperties.load(new FileInputStream(rootProject.file("keys.properties")))
+    buildTypes.each {
+        it.buildConfigField 'String', 'API_ENDPOINT', keystoreProperties['baseUrl']
+        it.buildConfigField 'String', 'API_KEY', keystoreProperties['apiKey']
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -44,7 +50,11 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    
+    implementation 'jp.wasabeef:recyclerview-animators:4.0.2'
+    implementation("io.coil-kt:coil:2.2.2")
 
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
 

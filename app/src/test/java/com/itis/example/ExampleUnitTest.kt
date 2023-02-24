@@ -1,4 +1,4 @@
-package com.itis.android_2c2s_first_project
+package com.itis.example
 
 import org.junit.Test
 
