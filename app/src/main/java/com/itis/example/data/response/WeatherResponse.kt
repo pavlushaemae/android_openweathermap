@@ -85,3 +85,4 @@ data class Clouds(
     @SerializedName("all")
     val all: Int
 )
+

@@ -1,5 +1,6 @@
 package com.itis.example.data
 
+import com.itis.example.data.response.CitiesResponce
 import com.itis.example.data.response.WeatherResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -21,4 +22,13 @@ interface WeatherApi {
     suspend fun getWeather(
         @Query("id") cityId: Int,
     ): WeatherResponse
+
+    @GET("find")
+    suspend fun getSomeWeather(
+        @Query("lat") latitude: Double,
+        @Query("lon") longitude: Double,
+        @Query("cnt") countOfCities: Int
+    ): CitiesResponce
+
 }
+

@@ -1,18 +1,24 @@
 package com.itis.example.data.service.impl
 
-import com.itis.example.data.DataContainer
+import com.itis.example.data.model.WeatherUIModel
+import com.itis.example.data.repo.impl.WeatherRepositoryImpl
 import com.itis.example.data.response.WeatherResponse
 import com.itis.example.data.service.WeatherService
 
-class WeatherServiceImpl : WeatherService {
+object WeatherServiceImpl : WeatherService {
 
-    private val api = DataContainer.weatherApi
+    private val weatherRepository = WeatherRepositoryImpl
 
     override suspend fun getWeatherById(id: Int): WeatherResponse {
-        return api.getWeather(id)
+        return weatherRepository.getWeatherById(id)
     }
 
     override suspend fun getWeatherByName(name: String): WeatherResponse {
-        return api.getWeather(name)
+        return weatherRepository.getWeatherByName(name)
+    }
+
+
+    override suspend fun getSomeCities(lat: Double, lon: Double, cnt: Int): List<WeatherUIModel> {
+        return weatherRepository.getSomeCities(lat, lon, cnt)
     }
 }

@@ -38,5 +38,5 @@ object DataContainer {
             .build()
     }
 
-    val weatherApi = retrofit.create(WeatherApi::class.java)
+    val weatherApi: WeatherApi = retrofit.create(WeatherApi::class.java)
 }
