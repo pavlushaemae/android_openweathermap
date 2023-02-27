@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">android_2c2s_first_project</string>
+    <string name="north">N</string>
+    <string name="north_east">NE</string>
+    <string name="east">E</string>
+    <string name="south_east">SE</string>
+    <string name="south">S</string>
+    <string name="south_west">SW</string>
+    <string name="west">W</string>
+    <string name="north_west">NW</string>
+    <string name="wind_speed">%s m/s</string>
+    <string name="humidity">%s%%</string>
+    <string name="degree">%s °C, %s</string>
+    <string name="pressure">%s Pa</string>
+    <string name="feels_like">Feels like %s °C</string>
+    <string name="sea_level">%s m</string>
+    <string name="temp">%s °C</string>
+    <string name="humidity_">Humidity: </string>
+    <string name="wind_">Wind: </string>
+    <string name="pressure_">Pressure: </string>
+    <string name="sea_level_">Sea level: </string>
+    <string name="max_temperature_">Max\ntemperature: </string>
+    <string name="min_temperature_">Min\ntemperature: </string>
 </resources>
