@@ -10,7 +10,7 @@
     <string name="north_west">NW</string>
     <string name="wind_speed">%s m/s</string>
     <string name="humidity">%s%%</string>
-    <string name="degree">%s °C, %s</string>
+    <string name="degree">%s °C,</string>
     <string name="pressure">%s Pa</string>
     <string name="feels_like">Feels like %s °C</string>
     <string name="sea_level">%s m</string>
@@ -21,4 +21,9 @@
     <string name="sea_level_">Sea level: </string>
     <string name="max_temperature_">Max\ntemperature: </string>
     <string name="min_temperature_">Min\ntemperature: </string>
+    <string name="go_to_settings">Go to settings</string>
+    <string name="permissions_are_needed">Permissions are needed</string>
+    <string name="location_not_found">Location not found</string>
+    <string name="give_permissions">Give permissions</string>
+    <string name="allow">Allow</string>
 </resources>
