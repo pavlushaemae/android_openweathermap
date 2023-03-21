@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Android_2c2s_first_project">
         <activity
-            android:name="com.itis.example.ui.activity.MainActivity"
+            android:name="com.itis.example.presentation.activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
