@@ -8,16 +8,25 @@ import androidx.fragment.app.viewModels
 import coil.load
 import com.itis.example.R
 import com.itis.example.databinding.FragmentDetailBinding
+import com.itis.example.di.AndroidResourceProvider
+import com.itis.example.domain.weather.GetWeatherByIdUseCase
 import com.itis.example.presentation.fragment.viewmodel.DetailViewModel
 import com.itis.example.utils.showSnackbar
+import javax.inject.Inject
 
 class DetailFragment : Fragment(R.layout.fragment_detail) {
 
     private var _binding: FragmentDetailBinding? = null
     private val binding get() = _binding!!
 
+    @Inject
+    lateinit var getWeatherByIdUseCase: GetWeatherByIdUseCase
+
+    @Inject
+    lateinit var resourceProvider: AndroidResourceProvider
+
     private val viewModel: DetailViewModel by viewModels {
-        DetailViewModel.FactoryExt
+        DetailViewModel.provideFactory(getWeatherByIdUseCase, resourceProvider)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

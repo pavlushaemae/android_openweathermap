@@ -16,12 +16,17 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
 import com.itis.example.R
 import com.itis.example.databinding.FragmentListBinding
+import com.itis.example.di.AndroidResourceProvider
+import com.itis.example.domain.location.GetLocationUseCase
+import com.itis.example.domain.weather.GetWeatherByNameUseCase
+import com.itis.example.domain.weather.GetWeatherListUseCase
 import com.itis.example.domain.weather.model.WeatherUIModel
 import com.itis.example.presentation.recycler.SpaceItemDecorator
 import com.itis.example.presentation.recycler.WeatherAdapter
 import com.itis.example.presentation.fragment.viewmodel.ListViewModel
 import com.itis.example.utils.showSnackbar
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter
+import javax.inject.Inject
 
 class ListFragment : Fragment(R.layout.fragment_list) {
     private var _binding: FragmentListBinding? = null
@@ -29,8 +34,25 @@ class ListFragment : Fragment(R.layout.fragment_list) {
 
     private var adapter: WeatherAdapter? = null
 
+    @Inject
+    lateinit var getWeatherByNameUseCase: GetWeatherByNameUseCase
+
+    @Inject
+    lateinit var getWeatherListUseCase: GetWeatherListUseCase
+
+    @Inject
+    lateinit var getLocationUseCase: GetLocationUseCase
+
+    @Inject
+    lateinit var resourceProvider: AndroidResourceProvider
+
     private val viewModel: ListViewModel by viewModels {
-        ListViewModel.FactoryExt
+        ListViewModel.provideFactory(
+            getWeatherByNameUseCase,
+            getWeatherListUseCase,
+            getLocationUseCase,
+            resourceProvider
+        )
     }
 
     private val settings =
@@ -48,6 +70,7 @@ class ListFragment : Fragment(R.layout.fragment_list) {
                     ) -> {
                         showPermsOnSetting()
                     }
+
                     else -> {
                         showGivePermissions()
                     }
@@ -145,9 +168,11 @@ class ListFragment : Fragment(R.layout.fragment_list) {
             ) == PackageManager.PERMISSION_GRANTED -> {
                 viewModel.onLocationPermsIsGranted(true)
             }
+
             shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
                 requestPerms()
             }
+
             else -> {
                 permission.launch(
                     arrayOf(
