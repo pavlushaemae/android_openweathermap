@@ -19,7 +19,7 @@ class ListViewModel(
     private val getWeatherByNameUseCase: GetWeatherByNameUseCase,
     private val getWeatherListUseCase: GetWeatherListUseCase,
     private val getLocationUseCase: GetLocationUseCase,
-    private val androidResourceProvider: ResourceProvider?
+    private val androidResourceProvider: ResourceProvider
 ) : ViewModel() {
 
     private val _adapter = MutableLiveData<WeatherAdapter>(null)
@@ -84,7 +84,7 @@ class ListViewModel(
                     }
                     _location.value = LocationModel(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
                     _makeSnackBar.value =
-                        androidResourceProvider?.getString(R.string.location_not_found)
+                        androidResourceProvider.getString(R.string.location_not_found)
                 } else if (perms.value == false) {
                     if (location.value == LocationModel(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)) {
                         onNeedList()

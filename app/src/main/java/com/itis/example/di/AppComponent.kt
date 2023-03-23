@@ -1,7 +1,7 @@
 package com.itis.example.di
 
 import android.content.Context
-import androidx.fragment.app.ListFragment
+import com.itis.example.presentation.fragment.ListFragment
 import com.itis.example.presentation.fragment.DetailFragment
 import dagger.BindsInstance
 import dagger.Component

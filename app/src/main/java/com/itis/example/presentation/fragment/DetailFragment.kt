@@ -6,9 +6,10 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import coil.load
+import com.itis.example.App
 import com.itis.example.R
 import com.itis.example.databinding.FragmentDetailBinding
-import com.itis.example.di.AndroidResourceProvider
+import com.itis.example.di.ResourceProvider
 import com.itis.example.domain.weather.GetWeatherByIdUseCase
 import com.itis.example.presentation.fragment.viewmodel.DetailViewModel
 import com.itis.example.utils.showSnackbar
@@ -23,10 +24,15 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
     lateinit var getWeatherByIdUseCase: GetWeatherByIdUseCase
 
     @Inject
-    lateinit var resourceProvider: AndroidResourceProvider
+    lateinit var resourceProvider: ResourceProvider
 
     private val viewModel: DetailViewModel by viewModels {
         DetailViewModel.provideFactory(getWeatherByIdUseCase, resourceProvider)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        App.appComponent.inject(this)
+        super.onCreate(savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
