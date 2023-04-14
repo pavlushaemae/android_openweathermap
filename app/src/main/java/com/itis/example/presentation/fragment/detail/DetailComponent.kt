@@ -1,9 +1,11 @@
 package com.itis.example.presentation.fragment.detail
 
+import com.itis.example.di.FragmentScope
 import dagger.BindsInstance
 import dagger.Provides
 import dagger.Subcomponent
 
+@FragmentScope
 @Subcomponent(modules = [DetailViewModelModule::class])
 interface DetailComponent {
 

@@ -1,8 +1,9 @@
 package com.itis.example.presentation.fragment.list
 
-import dagger.BindsInstance
+import com.itis.example.di.FragmentScope
 import dagger.Subcomponent
 
+@FragmentScope
 @Subcomponent(modules = [ListViewModelModule::class])
 interface ListComponent {
 
