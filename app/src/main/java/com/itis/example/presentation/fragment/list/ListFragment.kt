@@ -11,8 +11,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.itis.example.R
 import com.itis.example.databinding.FragmentListBinding
@@ -21,20 +21,17 @@ import com.itis.example.presentation.fragment.detail.DetailFragment
 import com.itis.example.presentation.recycler.SpaceItemDecorator
 import com.itis.example.presentation.recycler.WeatherAdapter
 import com.itis.example.utils.showSnackbar
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter
-import javax.inject.Inject
 
-class ListFragment : DaggerFragment(R.layout.fragment_list) {
+@AndroidEntryPoint
+class ListFragment : Fragment(R.layout.fragment_list) {
     private var _binding: FragmentListBinding? = null
     private val binding get() = _binding!!
 
     private var adapter: WeatherAdapter? = null
 
-    @Inject
-    lateinit var factory: ViewModelProvider.Factory
-
-    private val viewModel by viewModels<ListViewModel> { factory }
+    private val viewModel by viewModels<ListViewModel>()
 
     private val settings =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}

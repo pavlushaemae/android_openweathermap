@@ -1,22 +1,18 @@
 package com.itis.example.di
 
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.itis.example.data.location.LocationRepositoryImpl
-import com.itis.example.data.location.datasource.LocationDataSource
 import com.itis.example.domain.location.LocationRepository
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
 @Module
-class LocationModule {
+@InstallIn(SingletonComponent::class)
+interface LocationModule {
 
-    @Provides
-    fun provideLocationDataSource(
-        fusedLocationProviderClient: FusedLocationProviderClient
-    ): LocationDataSource = LocationDataSource(fusedLocationProviderClient)
-
-    @Provides
+    @Binds
     fun provideLocationRepository(
-        locationDataSource: LocationDataSource
-    ): LocationRepository = LocationRepositoryImpl(locationDataSource)
+       locationRepositoryImpl: LocationRepositoryImpl
+    ): LocationRepository
 }

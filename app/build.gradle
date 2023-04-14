@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-parcelize'
     id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
 }
 
 android {
@@ -82,7 +83,7 @@ dependencies {
     // endregion
 
     // region dagger2
-    def dagger = '2.45'
+    def dagger = '2.44'
     implementation "com.google.dagger:dagger:${dagger}"
     kapt "com.google.dagger:dagger-compiler:${dagger}"
 
@@ -90,7 +91,17 @@ dependencies {
     implementation "com.google.dagger:dagger-android:$dagger"
     implementation "com.google.dagger:dagger-android-support:$dagger"
     kapt "com.google.dagger:dagger-android-processor:$dagger"
+    // endregion
 
+    // region hilt
+    implementation "com.google.dagger:hilt-android:${dagger}"
+    kapt "com.google.dagger:hilt-compiler:${dagger}"
+    // endregion
+
+    // region koin
+//    def koin = '3.4.0'
+//    implementation "io.insert-koin:koin-android:$koin"
+//    implementation 'org.kodein.di:kodein-di:7.19.0'
     // endregion
 
     // region Utils

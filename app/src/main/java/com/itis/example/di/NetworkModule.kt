@@ -6,6 +6,8 @@ import com.itis.example.data.core.interceptor.UnitsInterceptor
 import com.itis.example.data.weather.datasource.remote.WeatherApi
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -27,6 +29,7 @@ annotation class InterceptLogger
 annotation class InterceptUnits
 
 @Module
+@InstallIn(SingletonComponent::class)
 class NetworkModule {
 
     @Provides

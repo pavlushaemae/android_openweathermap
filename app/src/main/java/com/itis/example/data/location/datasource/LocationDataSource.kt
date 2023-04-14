@@ -4,8 +4,9 @@ import android.annotation.SuppressLint
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.itis.example.domain.location.model.LocationModel
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
-class LocationDataSource(
+class LocationDataSource @Inject constructor(
     private val fusedLocationProviderClient: FusedLocationProviderClient
 ) {
 

@@ -5,13 +5,15 @@ import com.itis.example.R
 import com.itis.example.di.ResourceProvider
 import com.itis.example.domain.weather.GetWeatherByIdUseCase
 import com.itis.example.presentation.model.WeatherModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-class DetailViewModel @Inject constructor(
+class DetailViewModel @AssistedInject constructor(
     private val getWeatherByIdUseCase: GetWeatherByIdUseCase,
     private val androidResourceProvider: ResourceProvider,
-    private val cityId: Int
+    @Assisted private val cityId: Int
 ) : ViewModel() {
 
     private val _loading = MutableLiveData(false)
@@ -79,6 +81,22 @@ class DetailViewModel @Inject constructor(
                 in 293..337 -> it.getString(R.string.north_west)
                 else -> null
             }
+        }
+    }
+
+    @AssistedFactory
+    interface DetailViewModelFactory {
+        fun newInstance(cityId: Int): DetailViewModel
+    }
+
+    companion object {
+        fun provideFactory(
+            assistedFactory: DetailViewModelFactory,
+            cityId: Int
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                assistedFactory.newInstance(cityId) as T
         }
     }
 }

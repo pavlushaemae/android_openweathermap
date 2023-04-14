@@ -1,16 +1,18 @@
 package com.itis.example.di
 
 import com.itis.example.data.weather.WeatherRepositoryImpl
-import com.itis.example.data.weather.datasource.remote.WeatherApi
 import com.itis.example.domain.weather.WeatherRepository
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
 @Module
-class WeatherModule {
+@InstallIn(SingletonComponent::class)
+interface WeatherModule {
 
-    @Provides
+    @Binds
     fun provideWeatherRepository(
-        weatherApi: WeatherApi
-    ): WeatherRepository = WeatherRepositoryImpl(weatherApi)
+        weatherRepositoryImpl: WeatherRepositoryImpl
+    ): WeatherRepository
 }

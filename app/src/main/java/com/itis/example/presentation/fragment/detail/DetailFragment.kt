@@ -3,24 +3,31 @@ package com.itis.example.presentation.fragment.detail
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import coil.load
 import com.itis.example.R
 import com.itis.example.databinding.FragmentDetailBinding
 import com.itis.example.utils.showSnackbar
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-class DetailFragment : DaggerFragment(R.layout.fragment_detail) {
+@AndroidEntryPoint
+class DetailFragment : Fragment(R.layout.fragment_detail) {
 
     private var _binding: FragmentDetailBinding? = null
     private val binding get() = _binding!!
 
-    @Inject
-    lateinit var factory: ViewModelProvider.Factory
+    private val cityId by lazy {
+        arguments?.getInt(ARG_ID) ?: 0
+    }
 
-    private val viewModel by viewModels<DetailViewModel> { factory }
+    @Inject
+    lateinit var viewModelFactory: DetailViewModel.DetailViewModelFactory
+
+    private val viewModel: DetailViewModel by viewModels {
+        DetailViewModel.provideFactory(viewModelFactory, cityId)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

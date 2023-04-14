@@ -10,10 +10,12 @@ import com.itis.example.domain.weather.GetWeatherListUseCase
 import com.itis.example.domain.weather.model.WeatherUIModel
 import com.itis.example.presentation.fragment.utils.SingleLiveEvent
 import com.itis.example.presentation.recycler.WeatherAdapter
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+@HiltViewModel
 class ListViewModel @Inject constructor(
     private val getWeatherByNameUseCase: GetWeatherByNameUseCase,
     private val getWeatherListUseCase: GetWeatherListUseCase,
@@ -76,23 +78,27 @@ class ListViewModel @Inject constructor(
         viewModelScope.launch {
             getLocationUseCase().let {
                 Timber.e(it.toString())
-                if (it == null) {
-                    if (location.value == LocationModel(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)) {
-                        onNeedList()
-                        return@launch
+                when {
+                    it == null -> {
+                        if (location.value == LocationModel(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)) {
+                            onNeedList()
+                            return@launch
+                        }
+                        _location.value = LocationModel(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
+                        _makeSnackBar.value =
+                            androidResourceProvider.getString(R.string.location_not_found)
                     }
-                    _location.value = LocationModel(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
-                    _makeSnackBar.value =
-                        androidResourceProvider.getString(R.string.location_not_found)
-                } else if (perms.value == false) {
-                    if (location.value == LocationModel(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)) {
-                        onNeedList()
-                        return@launch
+                    perms.value == false -> {
+                        if (location.value == LocationModel(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)) {
+                            onNeedList()
+                            return@launch
+                        }
+                        _location.value = LocationModel(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
+                        _shouldShowRationale.value = true
                     }
-                    _location.value = LocationModel(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
-                    _shouldShowRationale.value = true
-                } else {
-                    _location.value = it
+                    else -> {
+                        _location.value = it
+                    }
                 }
             }
 

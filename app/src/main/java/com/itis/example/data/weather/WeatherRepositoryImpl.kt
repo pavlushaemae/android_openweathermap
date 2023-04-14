@@ -6,8 +6,9 @@ import com.itis.example.data.weather.mapper.toWeatherInfo
 import com.itis.example.data.weather.mapper.toWeatherUIList
 import com.itis.example.domain.weather.model.WeatherInfo
 import com.itis.example.domain.weather.WeatherRepository
+import javax.inject.Inject
 
-class WeatherRepositoryImpl(
+class WeatherRepositoryImpl @Inject constructor(
     private val api: WeatherApi
 ): WeatherRepository {
     override suspend fun getWeatherById(id: Int): WeatherInfo {
