@@ -1,4 +1,4 @@
-package com.itis.example.presentation.fragment.viewmodel.utils
+package com.itis.example.presentation.fragment.utils
 
 import androidx.annotation.MainThread
 import androidx.lifecycle.LifecycleOwner

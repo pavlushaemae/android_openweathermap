@@ -1,17 +1,17 @@
-package com.itis.example.presentation.fragment.viewmodel
+package com.itis.example.presentation.fragment.detail
 
 import androidx.lifecycle.*
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.itis.example.R
 import com.itis.example.di.ResourceProvider
 import com.itis.example.domain.weather.GetWeatherByIdUseCase
 import com.itis.example.presentation.model.WeatherModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DetailViewModel(
+class DetailViewModel @Inject constructor(
     private val getWeatherByIdUseCase: GetWeatherByIdUseCase,
-    private val androidResourceProvider: ResourceProvider
+    private val androidResourceProvider: ResourceProvider,
+    private val cityId: Int
 ) : ViewModel() {
 
     private val _loading = MutableLiveData(false)
@@ -26,12 +26,12 @@ class DetailViewModel(
     val weather: LiveData<WeatherModel?>
         get() = _weather
 
-    fun loadWeather(id: Int) {
+    fun loadWeather() {
         viewModelScope.launch {
             try {
                 _loading.value = true
                 androidResourceProvider.let {
-                    getWeatherByIdUseCase(id).run {
+                    getWeatherByIdUseCase(cityId).run {
 
                         _weather.value = WeatherModel(
                             cityName = cityName,
@@ -78,20 +78,6 @@ class DetailViewModel(
                 in 248..292 -> it.getString(R.string.west)
                 in 293..337 -> it.getString(R.string.north_west)
                 else -> null
-            }
-        }
-    }
-
-    companion object {
-
-        fun provideFactory(
-            weatherByIdUseCase: GetWeatherByIdUseCase,
-            resourceProvider: ResourceProvider,
-        ): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                // Create a SavedStateHandle for this ViewModel from extras
-//                val savedStateHandle = extras.createSavedStateHandle()
-                DetailViewModel(weatherByIdUseCase, resourceProvider)
             }
         }
     }

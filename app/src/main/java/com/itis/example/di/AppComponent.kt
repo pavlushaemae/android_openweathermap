@@ -1,15 +1,20 @@
 package com.itis.example.di
 
 import android.content.Context
-import com.itis.example.presentation.fragment.ListFragment
-import com.itis.example.presentation.fragment.DetailFragment
+import com.itis.example.presentation.fragment.detail.DetailComponent
+import com.itis.example.presentation.fragment.list.ListFragment
+import com.itis.example.presentation.fragment.detail.DetailFragment
+import com.itis.example.presentation.fragment.list.ListComponent
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
 
 @Component(
-    modules = [NetworkModule::class, WeatherModule::class, AppModule::class,
-        LocationModule::class]
+    modules = [NetworkModule::class,
+        WeatherModule::class,
+        AppModule::class,
+        LocationModule::class,
+        ViewModelModule::class]
 )
 @Singleton
 interface AppComponent {
@@ -18,9 +23,9 @@ interface AppComponent {
 
     fun provideResourceProvider(): ResourceProvider
 
-    fun inject(listFragment: ListFragment)
+    fun plusDetailComponent(): DetailComponent.Builder
 
-    fun inject(detailFragment: DetailFragment)
+    fun plusListComponent(): ListComponent.Builder
 
     @Component.Builder
     interface Builder {

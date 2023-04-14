@@ -1,8 +1,6 @@
-package com.itis.example.presentation.fragment.viewmodel
+package com.itis.example.presentation.fragment.list
 
 import androidx.lifecycle.*
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.itis.example.R
 import com.itis.example.di.ResourceProvider
 import com.itis.example.domain.location.GetLocationUseCase
@@ -10,12 +8,13 @@ import com.itis.example.domain.location.model.LocationModel
 import com.itis.example.domain.weather.GetWeatherByNameUseCase
 import com.itis.example.domain.weather.GetWeatherListUseCase
 import com.itis.example.domain.weather.model.WeatherUIModel
-import com.itis.example.presentation.fragment.viewmodel.utils.SingleLiveEvent
+import com.itis.example.presentation.fragment.utils.SingleLiveEvent
 import com.itis.example.presentation.recycler.WeatherAdapter
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
-class ListViewModel(
+class ListViewModel @Inject constructor(
     private val getWeatherByNameUseCase: GetWeatherByNameUseCase,
     private val getWeatherListUseCase: GetWeatherListUseCase,
     private val getLocationUseCase: GetLocationUseCase,
@@ -153,23 +152,5 @@ class ListViewModel(
         private const val DEFAULT_COUNT = 10
         private const val DEFAULT_LATITUDE = 55.75
         private const val DEFAULT_LONGITUDE = 37.61
-
-        fun provideFactory(
-            weatherByNameUseCase: GetWeatherByNameUseCase,
-            weatherListUseCase: GetWeatherListUseCase,
-            locationUseCase: GetLocationUseCase,
-            resourceProvider: ResourceProvider,
-        ): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                // Create a SavedStateHandle for this ViewModel from extras
-//                val savedStateHandle = extras.createSavedStateHandle()
-                ListViewModel(
-                    weatherByNameUseCase,
-                    weatherListUseCase,
-                    locationUseCase,
-                    resourceProvider
-                )
-            }
-        }
     }
 }
