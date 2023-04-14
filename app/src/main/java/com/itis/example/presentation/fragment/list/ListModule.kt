@@ -7,7 +7,7 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 
 @Module
-interface ListViewModelModule {
+interface ListModule {
 
     @Binds
     @[IntoMap ViewModelKey(ListViewModel::class)]

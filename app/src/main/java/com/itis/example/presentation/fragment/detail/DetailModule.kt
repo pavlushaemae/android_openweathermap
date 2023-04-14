@@ -12,7 +12,7 @@ import javax.inject.Qualifier
 annotation class ArgCityId
 
 @Module
-interface DetailViewModelModule {
+interface DetailModule {
 
     @Binds
     fun provideArgCityId(@ArgCityId id: Int): Int

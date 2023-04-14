@@ -86,6 +86,13 @@ dependencies {
     implementation "com.google.dagger:dagger:${dagger}"
     kapt "com.google.dagger:dagger-compiler:${dagger}"
 
+    // region dagger-android
+    implementation "com.google.dagger:dagger-android:$dagger"
+    implementation "com.google.dagger:dagger-android-support:$dagger"
+    kapt "com.google.dagger:dagger-android-processor:$dagger"
+
+    // endregion
+
     // region Utils
     implementation 'com.jakewharton.timber:timber:5.0.1'
     // endregion

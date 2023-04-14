@@ -4,7 +4,7 @@ import com.itis.example.di.FragmentScope
 import dagger.Subcomponent
 
 @FragmentScope
-@Subcomponent(modules = [ListViewModelModule::class])
+@Subcomponent(modules = [ListModule::class])
 interface ListComponent {
 
     fun inject(fragment: ListFragment)
