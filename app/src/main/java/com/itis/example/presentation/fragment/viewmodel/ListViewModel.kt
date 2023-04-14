@@ -4,7 +4,6 @@ import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.itis.example.R
-import com.itis.example.di.DataContainer
 import com.itis.example.di.ResourceProvider
 import com.itis.example.domain.location.GetLocationUseCase
 import com.itis.example.domain.location.model.LocationModel
@@ -20,7 +19,7 @@ class ListViewModel(
     private val getWeatherByNameUseCase: GetWeatherByNameUseCase,
     private val getWeatherListUseCase: GetWeatherListUseCase,
     private val getLocationUseCase: GetLocationUseCase,
-    private val androidResourceProvider: ResourceProvider?
+    private val androidResourceProvider: ResourceProvider
 ) : ViewModel() {
 
     private val _adapter = MutableLiveData<WeatherAdapter>(null)
@@ -85,7 +84,7 @@ class ListViewModel(
                     }
                     _location.value = LocationModel(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
                     _makeSnackBar.value =
-                        androidResourceProvider?.getString(R.string.location_not_found)
+                        androidResourceProvider.getString(R.string.location_not_found)
                 } else if (perms.value == false) {
                     if (location.value == LocationModel(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)) {
                         onNeedList()
@@ -155,15 +154,21 @@ class ListViewModel(
         private const val DEFAULT_LATITUDE = 55.75
         private const val DEFAULT_LONGITUDE = 37.61
 
-        val FactoryExt: ViewModelProvider.Factory = viewModelFactory {
+        fun provideFactory(
+            weatherByNameUseCase: GetWeatherByNameUseCase,
+            weatherListUseCase: GetWeatherListUseCase,
+            locationUseCase: GetLocationUseCase,
+            resourceProvider: ResourceProvider,
+        ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val useCaseByName = DataContainer.weatherByNameUseCase
-                val useCaseList = DataContainer.weatherListUseCase
-                val useCaseLocation = DataContainer.locationUseCase
-                val resourceProvider = DataContainer.androidResourceProvider
                 // Create a SavedStateHandle for this ViewModel from extras
 //                val savedStateHandle = extras.createSavedStateHandle()
-                ListViewModel(useCaseByName, useCaseList, useCaseLocation, resourceProvider)
+                ListViewModel(
+                    weatherByNameUseCase,
+                    weatherListUseCase,
+                    locationUseCase,
+                    resourceProvider
+                )
             }
         }
     }

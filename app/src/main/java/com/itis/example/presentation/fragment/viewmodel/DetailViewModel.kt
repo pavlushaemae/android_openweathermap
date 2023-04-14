@@ -4,7 +4,6 @@ import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.itis.example.R
-import com.itis.example.di.DataContainer
 import com.itis.example.di.ResourceProvider
 import com.itis.example.domain.weather.GetWeatherByIdUseCase
 import com.itis.example.presentation.model.WeatherModel
@@ -12,7 +11,7 @@ import kotlinx.coroutines.launch
 
 class DetailViewModel(
     private val getWeatherByIdUseCase: GetWeatherByIdUseCase,
-    private val androidResourceProvider: ResourceProvider?
+    private val androidResourceProvider: ResourceProvider
 ) : ViewModel() {
 
     private val _loading = MutableLiveData(false)
@@ -31,7 +30,7 @@ class DetailViewModel(
         viewModelScope.launch {
             try {
                 _loading.value = true
-                androidResourceProvider?.let {
+                androidResourceProvider.let {
                     getWeatherByIdUseCase(id).run {
 
                         _weather.value = WeatherModel(
@@ -67,7 +66,7 @@ class DetailViewModel(
 
 
     private fun degreeToString(degree: Int?): String? {
-        return androidResourceProvider?.let {
+        return androidResourceProvider.let {
             when (degree) {
                 in 0..22 -> it.getString(R.string.north)
                 in 338..360 -> it.getString(R.string.north)
@@ -84,13 +83,15 @@ class DetailViewModel(
     }
 
     companion object {
-        val FactoryExt: ViewModelProvider.Factory = viewModelFactory {
+
+        fun provideFactory(
+            weatherByIdUseCase: GetWeatherByIdUseCase,
+            resourceProvider: ResourceProvider,
+        ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val useCaseById = DataContainer.weatherByIdUseCase
-                val resourceProvider = DataContainer.androidResourceProvider
                 // Create a SavedStateHandle for this ViewModel from extras
 //                val savedStateHandle = extras.createSavedStateHandle()
-                DetailViewModel(useCaseById, resourceProvider)
+                DetailViewModel(weatherByIdUseCase, resourceProvider)
             }
         }
     }
