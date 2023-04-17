@@ -1,4 +1,4 @@
-package com.itis.example.presentation.fragment
+package com.itis.example.presentation.fragment.detail
 
 import android.os.Bundle
 import android.view.View
@@ -6,43 +6,34 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import coil.load
-import com.itis.example.App
 import com.itis.example.R
 import com.itis.example.databinding.FragmentDetailBinding
-import com.itis.example.di.ResourceProvider
-import com.itis.example.domain.weather.GetWeatherByIdUseCase
-import com.itis.example.presentation.fragment.viewmodel.DetailViewModel
 import com.itis.example.utils.showSnackbar
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class DetailFragment : Fragment(R.layout.fragment_detail) {
 
     private var _binding: FragmentDetailBinding? = null
     private val binding get() = _binding!!
 
-    @Inject
-    lateinit var getWeatherByIdUseCase: GetWeatherByIdUseCase
-
-    @Inject
-    lateinit var resourceProvider: ResourceProvider
-
-    private val viewModel: DetailViewModel by viewModels {
-        DetailViewModel.provideFactory(getWeatherByIdUseCase, resourceProvider)
+    private val cityId by lazy {
+        arguments?.getInt(ARG_ID) ?: 0
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        App.appComponent.inject(this)
-        super.onCreate(savedInstanceState)
+    @Inject
+    lateinit var viewModelFactory: DetailViewModel.DetailViewModelFactory
+
+    private val viewModel: DetailViewModel by viewModels {
+        DetailViewModel.provideFactory(viewModelFactory, cityId)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentDetailBinding.bind(view)
-        val id: Int = arguments?.run {
-            getInt(ARG_ID)
-        } ?: 0
         observeViewModel()
-        viewModel.loadWeather(id)
+        viewModel.loadWeather()
     }
 
     private fun observeViewModel() {

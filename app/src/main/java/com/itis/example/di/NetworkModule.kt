@@ -6,19 +6,34 @@ import com.itis.example.data.core.interceptor.UnitsInterceptor
 import com.itis.example.data.weather.datasource.remote.WeatherApi
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
-import javax.inject.Named
+import javax.inject.Qualifier
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class InterceptApiKey
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class InterceptLogger
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class InterceptUnits
 
 @Module
+@InstallIn(SingletonComponent::class)
 class NetworkModule {
 
     @Provides
-    @Named("logger")
+    @InterceptLogger
     fun provideLoggingInterceptor(): Interceptor = HttpLoggingInterceptor().apply {
         level = if (BuildConfig.DEBUG) {
             HttpLoggingInterceptor.Level.BODY
@@ -28,18 +43,18 @@ class NetworkModule {
     }
 
     @Provides
-    @Named("api_key")
+    @InterceptApiKey
     fun provideApiKeyInterceptor(): Interceptor = ApiKeyInterceptor()
 
     @Provides
-    @Named("units")
+    @InterceptUnits
     fun provideUnitsInterceptor(): Interceptor = UnitsInterceptor()
 
     @Provides
     fun provideHttpClient(
-        @Named("api_key") apiKeyInterceptor: Interceptor,
-        @Named("logger") loggingInterceptor: Interceptor,
-        @Named("units") unitsInterceptor: Interceptor,
+        @InterceptApiKey apiKeyInterceptor: Interceptor,
+        @InterceptLogger loggingInterceptor: Interceptor,
+        @InterceptUnits unitsInterceptor: Interceptor,
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .addInterceptor(apiKeyInterceptor)

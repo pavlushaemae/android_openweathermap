@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.itis.example.R
 import com.itis.example.databinding.ActivityMainBinding
-import com.itis.example.presentation.fragment.ListFragment
+import com.itis.example.presentation.fragment.list.ListFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private var binding: ActivityMainBinding? = null
 

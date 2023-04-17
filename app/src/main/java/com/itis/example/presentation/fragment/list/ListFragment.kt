@@ -1,4 +1,4 @@
-package com.itis.example.presentation.fragment
+package com.itis.example.presentation.fragment.list
 
 import android.Manifest
 import android.content.Intent
@@ -14,47 +14,24 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
-import com.itis.example.App
 import com.itis.example.R
 import com.itis.example.databinding.FragmentListBinding
-import com.itis.example.di.ResourceProvider
-import com.itis.example.domain.location.GetLocationUseCase
-import com.itis.example.domain.weather.GetWeatherByNameUseCase
-import com.itis.example.domain.weather.GetWeatherListUseCase
 import com.itis.example.domain.weather.model.WeatherUIModel
+import com.itis.example.presentation.fragment.detail.DetailFragment
 import com.itis.example.presentation.recycler.SpaceItemDecorator
 import com.itis.example.presentation.recycler.WeatherAdapter
-import com.itis.example.presentation.fragment.viewmodel.ListViewModel
 import com.itis.example.utils.showSnackbar
+import dagger.hilt.android.AndroidEntryPoint
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter
-import javax.inject.Inject
 
+@AndroidEntryPoint
 class ListFragment : Fragment(R.layout.fragment_list) {
     private var _binding: FragmentListBinding? = null
     private val binding get() = _binding!!
 
     private var adapter: WeatherAdapter? = null
 
-    @Inject
-    lateinit var getWeatherByNameUseCase: GetWeatherByNameUseCase
-
-    @Inject
-    lateinit var getWeatherListUseCase: GetWeatherListUseCase
-
-    @Inject
-    lateinit var getLocationUseCase: GetLocationUseCase
-
-    @Inject
-    lateinit var resourceProvider: ResourceProvider
-
-    private val viewModel: ListViewModel by viewModels {
-        ListViewModel.provideFactory(
-            getWeatherByNameUseCase,
-            getWeatherListUseCase,
-            getLocationUseCase,
-            resourceProvider
-        )
-    }
+    private val viewModel by viewModels<ListViewModel>()
 
     private val settings =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
@@ -78,11 +55,6 @@ class ListFragment : Fragment(R.layout.fragment_list) {
                 }
             }
         }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        App.appComponent.inject(this)
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
