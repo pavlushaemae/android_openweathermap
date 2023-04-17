@@ -22,7 +22,14 @@ import com.itis.example.presentation.recycler.SpaceItemDecorator
 import com.itis.example.presentation.recycler.WeatherAdapter
 import com.itis.example.utils.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.kotlin.Flowables
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter
+import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class ListFragment : Fragment(R.layout.fragment_list) {
@@ -30,6 +37,8 @@ class ListFragment : Fragment(R.layout.fragment_list) {
     private val binding get() = _binding!!
 
     private var adapter: WeatherAdapter? = null
+
+    private var searchDisposable: Disposable? = null
 
     private val viewModel by viewModels<ListViewModel>()
 
@@ -67,21 +76,39 @@ class ListFragment : Fragment(R.layout.fragment_list) {
 
     private fun initSearchView() {
         binding.run {
-            svCity.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            searchDisposable = svCity.observeQuery()
+                .filter { it.length > 2 }
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .distinctUntilChanged()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onNext = {
+                    viewModel.onLoadClick(it)
+                }, onError = {
+                    Timber.e("Error: $it")
+                })
+        }
+    }
+
+    private fun SearchView.observeQuery() =
+        Flowables.create<String>(mode = BackpressureStrategy.LATEST) { emitter ->
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
-                    query?.let { q ->
-                        viewModel.onLoadClick(q)
+                    query?.let {
+                        emitter.onComplete()
                     }
-                    return false
+                    return true
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    return false
+                    newText?.let {
+                        emitter.onNext(it)
+                    }
+                    return true
                 }
 
             })
         }
-    }
+
 
     private fun observeViewModel() {
         with(viewModel) {
@@ -244,7 +271,7 @@ class ListFragment : Fragment(R.layout.fragment_list) {
 
     override fun onDestroy() {
         _binding = null
-        adapter = null
+        searchDisposable?.dispose()
         super.onDestroy()
     }
 }

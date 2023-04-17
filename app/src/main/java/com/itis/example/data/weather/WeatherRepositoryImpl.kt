@@ -6,21 +6,29 @@ import com.itis.example.data.weather.mapper.toWeatherInfo
 import com.itis.example.data.weather.mapper.toWeatherUIList
 import com.itis.example.domain.weather.model.WeatherInfo
 import com.itis.example.domain.weather.WeatherRepository
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
 class WeatherRepositoryImpl @Inject constructor(
     private val api: WeatherApi
-): WeatherRepository {
-    override suspend fun getWeatherById(id: Int): WeatherInfo {
-        return api.getWeather(id).toWeatherInfo()
-    }
+) : WeatherRepository {
+    override fun getWeatherById(id: Int): Single<WeatherInfo> = api.getWeather(id)
+        .map {
+            it.toWeatherInfo()
+        }
+        .subscribeOn(Schedulers.io())
 
-    override suspend fun getWeatherByName(name: String): WeatherInfo {
-        return api.getWeather(name).toWeatherInfo()
-    }
+    override fun getWeatherByName(name: String): Single<WeatherInfo> = api.getWeather(name)
+        .map {
+            it.toWeatherInfo()
+        }
+        .subscribeOn(Schedulers.io())
 
-    override suspend fun getSomeCities(lat: Double, lon: Double, cnt: Int): List<WeatherUIModel> {
-        return api.getSomeWeather(lat,lon, cnt).toWeatherUIList()
-    }
-
+    override fun getSomeCities(lat: Double, lon: Double, cnt: Int): Single<List<WeatherUIModel>> =
+        api.getSomeWeather(lat, lon, cnt)
+            .map {
+                it.toWeatherUIList()
+            }
+            .subscribeOn(Schedulers.io())
 }

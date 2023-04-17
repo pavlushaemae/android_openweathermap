@@ -11,8 +11,10 @@ import com.itis.example.domain.weather.model.WeatherUIModel
 import com.itis.example.presentation.fragment.utils.SingleLiveEvent
 import com.itis.example.presentation.recycler.WeatherAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
-import timber.log.Timber
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.plusAssign
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,6 +24,8 @@ class ListViewModel @Inject constructor(
     private val getLocationUseCase: GetLocationUseCase,
     private val androidResourceProvider: ResourceProvider
 ) : ViewModel() {
+
+    private val disposable: CompositeDisposable = CompositeDisposable()
 
     private val _adapter = MutableLiveData<WeatherAdapter>(null)
     val adapter: LiveData<WeatherAdapter>
@@ -75,34 +79,42 @@ class ListViewModel @Inject constructor(
     }
 
     fun onNeedLocation() {
-        viewModelScope.launch {
-            getLocationUseCase().let {
-                Timber.e(it.toString())
-                when {
-                    it == null -> {
-                        if (location.value == LocationModel(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)) {
-                            onNeedList()
-                            return@launch
+        disposable += getLocationUseCase()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onSuccess = {
+                    when (perms.value) {
+                        false -> {
+                            if (location.value == LocationModel(
+                                    DEFAULT_LATITUDE,
+                                    DEFAULT_LONGITUDE
+                                )
+                            ) {
+                                onNeedList()
+                                return@subscribeBy
+                            }
+                            _location.value = LocationModel(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
+                            _shouldShowRationale.value = true
                         }
-                        _location.value = LocationModel(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
-                        _makeSnackBar.value =
-                            androidResourceProvider.getString(R.string.location_not_found)
-                    }
-                    perms.value == false -> {
-                        if (location.value == LocationModel(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)) {
-                            onNeedList()
-                            return@launch
+                        else -> {
+                            _location.value = it
                         }
-                        _location.value = LocationModel(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
-                        _shouldShowRationale.value = true
                     }
-                    else -> {
-                        _location.value = it
+                }, onError = { error ->
+                    _error.value = error
+                    if (location.value == LocationModel(
+                            DEFAULT_LATITUDE,
+                            DEFAULT_LONGITUDE
+                        )
+                    ) {
+                        onNeedList()
+                        return@subscribeBy
                     }
+                    _location.value = LocationModel(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
+                    _makeSnackBar.value =
+                        androidResourceProvider.getString(R.string.location_not_found)
                 }
-            }
-
-        }
+            )
     }
 
     fun onNeedList() {
@@ -116,20 +128,17 @@ class ListViewModel @Inject constructor(
         lon: Double,
         countOfCity: Int = DEFAULT_COUNT
     ) {
-        viewModelScope.launch {
-            try {
-                Timber.e("$lat, $lon")
-                _loading.value = true
-                getWeatherListUseCase(lat, lon, countOfCity).let {
-                    Timber.e(it.toString())
-                    _weatherUIList.value = it
+        disposable += getWeatherListUseCase(lat, lon, countOfCity)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { _loading.value = true }
+            .doAfterTerminate { _loading.value = false }
+            .subscribeBy(
+                onSuccess = { weatherUIModelList ->
+                    _weatherUIList.value = weatherUIModelList
+                }, onError = { error ->
+                    _error.value = error
                 }
-            } catch (e: Throwable) {
-                _error.value = e
-            } finally {
-                _loading.value = false
-            }
-        }
+            )
     }
 
 
@@ -138,20 +147,22 @@ class ListViewModel @Inject constructor(
     }
 
     private fun loadWeather(city: String) {
-        viewModelScope.launch {
-            try {
-                _loading.value = true
-                getWeatherByNameUseCase(city).let {
-                    it.apply {
-                        onShouldNavigate(id)
-                    }
+        disposable += getWeatherByNameUseCase(city)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { _loading.value = true }
+            .doAfterTerminate { _loading.value = false }
+            .subscribeBy(
+                onSuccess = { weatherInfo ->
+                    onShouldNavigate(weatherInfo.id)
+                }, onError = { error ->
+                    _error.value = error
                 }
-            } catch (error: Throwable) {
-                _error.value = error
-            } finally {
-                _loading.value = false
-            }
-        }
+            )
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        disposable.clear()
     }
 
     companion object {
