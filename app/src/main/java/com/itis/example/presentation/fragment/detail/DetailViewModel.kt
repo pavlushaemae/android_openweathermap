@@ -24,8 +24,8 @@ class DetailViewModel @AssistedInject constructor(
     val error: LiveData<Throwable?>
         get() = _error
 
-    private val _weather = MutableLiveData<WeatherModel?>(null)
-    val weather: LiveData<WeatherModel?>
+    private val _weather = MutableLiveData<WeatherModel>()
+    val weather: LiveData<WeatherModel>
         get() = _weather
 
     fun loadWeather() {
