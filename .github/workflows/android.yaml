@@ -2,7 +2,7 @@ name: CI Workflow
 
 on:
   pull_request:
-    branches: [ "master", "main", "task/hw4" ]
+    branches: [ "master", "main", "task/hw3", "task/hw4" ]
 
   workflow_dispatch:
 
