@@ -60,7 +60,7 @@ class ListFragment : Fragment(R.layout.fragment_list) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentListBinding.bind(view)
         observeViewModel()
-        viewModel.onNeedAdapter()
+        initAdapter()
         checkPermissions()
         initSearchView()
     }
@@ -98,11 +98,6 @@ class ListFragment : Fragment(R.layout.fragment_list) {
                     navigateToDetail(it)
                 }
             }
-            adapter.observe(viewLifecycleOwner) {
-                it?.let {
-                    initAdapter(it)
-                }
-            }
             shouldShowRationale.observe(viewLifecycleOwner) {
                 showGivePermissions()
             }
@@ -125,13 +120,16 @@ class ListFragment : Fragment(R.layout.fragment_list) {
         }
     }
 
-    private fun initAdapter(listAdapter: WeatherAdapter) {
+    private fun initAdapter() {
         val itemDecoration =
             SpaceItemDecorator(
                 this.requireContext(),
                 16.0f
             )
         with(binding) {
+            val listAdapter = WeatherAdapter {
+                viewModel.onShouldNavigate(it.id)
+            }
             adapter = listAdapter
             rvWeather.adapter = ScaleInAnimationAdapter(listAdapter)
             rvWeather.addItemDecoration(itemDecoration)

@@ -1,6 +1,9 @@
 package com.itis.example.presentation.fragment.list
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.itis.example.R
 import com.itis.example.di.ResourceProvider
 import com.itis.example.domain.location.GetLocationUseCase
@@ -9,7 +12,6 @@ import com.itis.example.domain.weather.GetWeatherByNameUseCase
 import com.itis.example.domain.weather.GetWeatherListUseCase
 import com.itis.example.domain.weather.model.WeatherUIModel
 import com.itis.example.presentation.fragment.utils.SingleLiveEvent
-import com.itis.example.presentation.recycler.WeatherAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -22,10 +24,6 @@ class ListViewModel @Inject constructor(
     private val getLocationUseCase: GetLocationUseCase,
     private val androidResourceProvider: ResourceProvider
 ) : ViewModel() {
-
-    private val _adapter = MutableLiveData<WeatherAdapter>(null)
-    val adapter: LiveData<WeatherAdapter>
-        get() = _adapter
 
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean>
@@ -64,14 +62,8 @@ class ListViewModel @Inject constructor(
         onNeedList()
     }
 
-    private fun onShouldNavigate(id: Int) {
+    fun onShouldNavigate(id: Int) {
         navigateToDetails.value = id
-    }
-
-    fun onNeedAdapter() {
-        _adapter.value = WeatherAdapter {
-            onShouldNavigate(it.id)
-        }
     }
 
     fun onNeedLocation() {
@@ -88,6 +80,7 @@ class ListViewModel @Inject constructor(
                         _makeSnackBar.value =
                             androidResourceProvider.getString(R.string.location_not_found)
                     }
+
                     perms.value == false -> {
                         if (location.value == LocationModel(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)) {
                             onNeedList()
@@ -96,6 +89,7 @@ class ListViewModel @Inject constructor(
                         _location.value = LocationModel(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
                         _shouldShowRationale.value = true
                     }
+
                     else -> {
                         _location.value = it
                     }
@@ -110,7 +104,6 @@ class ListViewModel @Inject constructor(
             getWeatherList(latitude, longitude)
         }
     }
-
     private fun getWeatherList(
         lat: Double,
         lon: Double,

@@ -46,7 +46,3 @@ fun CitiesResponse.toWeatherUIList(): List<WeatherUIModel> {
         )
     }.toMutableList()
 }
-
-
-
-
